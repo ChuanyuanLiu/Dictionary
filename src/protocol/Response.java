@@ -25,6 +25,6 @@ public class Response implements Serializable {
 
     @Override
     public String toString() {
-        return "protocol.Response: " + status + "\ndictionary: " + dictionary + "\n";
+        return "database.Response: " + status + "\ndictionary: " + dictionary + "\n";
     }
 }

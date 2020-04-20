@@ -3,7 +3,7 @@ package server;
 import protocol.Request;
 import protocol.Response;
 import protocol.ResponseCode;
-import service.DictionaryService;
+import service.Service;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -11,11 +11,11 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class ServerConnection {
-    private DictionaryService service;
+    private Service service;
     private Socket socket;
 
     // Offers service on a connection defined by the socket
-    ServerConnection(DictionaryService service, Socket socket) {
+    ServerConnection(Service service, Socket socket) {
         this.service = service;
         this.socket = socket;
     }
@@ -38,26 +38,36 @@ public class ServerConnection {
         }
     }
 
-    public Boolean execute() {
-        try {
-            ObjectInputStream objectInput = new ObjectInputStream(this.socket.getInputStream());
-            Request request = (Request) objectInput.readObject();
-            Response response = this.respond(request);
-            System.out.print(request);
-            System.out.print(response);
-            ObjectOutputStream objectOut = new ObjectOutputStream(this.socket.getOutputStream());
-            objectOut.writeObject(response);
-            objectOut.flush();
-        } catch (IOException e) {
-            System.out.println("Connection Lost");
-            e.printStackTrace();
-            return false;
-        } catch (ClassNotFoundException e) {
-            System.out.println("protocol.Request is not correctly formatted");
-            e.printStackTrace();
-            return false;
+    public void execute() {
+        // Keep reading and responding to client
+        while (true) {
+            try {
+                ObjectInputStream objectInput = new ObjectInputStream(this.socket.getInputStream());
+                Request request = (Request) objectInput.readObject();
+                Response response = this.respond(request);
+                System.out.print(request);
+                System.out.print(response);
+                ObjectOutputStream objectOut = new ObjectOutputStream(this.socket.getOutputStream());
+                objectOut.writeObject(response);
+                objectOut.flush();
+            } catch (IOException e) {
+                System.out.println("Connection Lost");
+                e.printStackTrace();
+                break;
+            } catch (ClassNotFoundException e) {
+                System.out.println("Wrong request");
+                e.printStackTrace();
+                break;
+            }
         }
-        return true;
+        // Close the socket
+        try {
+            this.socket.close();
+            return;
+        } catch (IOException e) {
+            System.out.println("Could not close the socket");
+            e.printStackTrace();
+            return;
+        }
     }
-
 }

@@ -1,36 +1,35 @@
 package server;
 
+import service.Connector;
 import service.DictionaryService;
-import service.EnglishDictionaryService;
-import service.Parser;
-import service.SerializeParser;
+import service.SerializeConnector;
+import service.Service;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 public class Server {
 
     public static void main(String[] args) {
         int hostPort = 4444;
         String fileLocation = "resources/Dictionary.ser";
-        Parser parser = new SerializeParser(fileLocation);
-        DictionaryService service = new EnglishDictionaryService(parser);
+        Connector connector = new SerializeConnector(fileLocation);
+        Service service = new DictionaryService(connector);
         ServerSocket welcomeSocket = null;
-
         try {
             welcomeSocket = new ServerSocket(hostPort);
             while (true) {
                 Socket socket = welcomeSocket.accept();
+                System.out.println("received a new socket");
+                socket.setSoTimeout(600000);
                 ServerConnection connection = new ServerConnection(service, socket);
-                if (connection.execute()) {
-                    System.out.println("Success");
-                } else {
-                    System.out.println("Failure");
-                }
-                socket.close();
+                connection.execute();
             }
-        } catch (IOException e) {
+        } catch(SocketTimeoutException e) {
+            System.out.println("Socket timed out");
+        } catch(IOException e) {
             e.printStackTrace();
         } finally {
             if (welcomeSocket != null) {

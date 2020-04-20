@@ -27,6 +27,17 @@ public class Request implements Serializable {
 
     @Override
     public String toString() {
-        return "protocol.Request: " + status + "\nword: " + word + "\nmeaning: " + meaning + "\n";
+        return "Request: " + status + "\nword: " + word + "\nmeaning: " + meaning + "\n";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        Request other = (Request) obj;
+        if ((other.word == this.word || other.word.equals(this.word)) &&
+            (other.meaning == this.meaning || other.meaning.equals(this.meaning)) &&
+            other.status == this.status) {
+            return true;
+        }
+        return false;
     }
 }

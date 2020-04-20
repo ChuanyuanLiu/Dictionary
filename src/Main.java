@@ -1,11 +1,11 @@
-import service.EnglishDictionaryService;
-import service.Parser;
-import service.SerializeParser;
+import service.DictionaryService;
+import service.Connector;
+import service.SerializeConnector;
 
 public class Main {
     public static void main(String[] args) {
-        Parser parser = new SerializeParser("resources/Dictionary.ser");
-        EnglishDictionaryService s = new EnglishDictionaryService(parser);
+        Connector connector = new SerializeConnector("resources/Dictionary.ser");
+        DictionaryService s = new DictionaryService(connector);
         System.out.println(s.index());
         System.out.println(s.add("Computer", "An electronic device"));
         System.out.println(s.add("Taxonomy",

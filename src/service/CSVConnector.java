@@ -1,35 +1,38 @@
 package service;
 
-import javafx.util.Pair;
+import service.database.Data;
+import service.database.DatabaseCode;
 
 import java.io.*;
 import java.util.HashMap;
 
-// A service.Parser that converts csv file to a map of words to meaning
-public class CSVParser implements Parser {
+// A service.Connector that converts csv file to a map of words to meaning
+public class CSVConnector implements Connector {
     private String token;
     private String fileLocation;
 
-    public CSVParser(String fileName, String token) {
+    public CSVConnector(String fileName, String token) {
         this.token = token;
         this.fileLocation = fileName;
     }
 
-    public Pair<Boolean, HashMap<String, String>> readAll() {
+    public Data readAll() {
         HashMap<String, String> data = new HashMap<String, String>();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(this.fileLocation));
             while (true) {
-                String[] row = reader.readLine().split(token);
+                String row = reader.readLine();
                 if (row == null)
                     break;
-                data.put(row[0], row[1]);
+                String[] item = row.split(token);
+                data.put(item[0], item[1]);
             }
             reader.close();
         } catch (IOException e) {
-            return new Pair(false, null);
+            e.printStackTrace();
+            return new Data(DatabaseCode.DATABASE_UNAVAILABLE, data);
         }
-        return new Pair(true, data);
+        return new Data(DatabaseCode.DATABASE_READ, data);
     }
 
     public Boolean writeAll(HashMap<String, String> dictionary) {

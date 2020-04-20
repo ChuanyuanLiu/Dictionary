@@ -1,19 +1,21 @@
 package service;
 
-import javafx.util.Pair;
+import service.database.Data;
+import service.database.DatabaseCode;
 
 import java.io.*;
 import java.util.HashMap;
 
-// A service.Parser that converts csv file to a map of words to meaning
-public class SerializeParser implements Parser {
+// A service.Connector that converts csv file to a map of words to meaning
+public class SerializeConnector implements Connector {
     private String fileLocation;
 
-    public SerializeParser(String fileName) {
+    public SerializeConnector(String fileName) {
         this.fileLocation = fileName;
     }
 
-    public Pair<Boolean, HashMap<String, String>> readAll() {
+    // Read and closes the file
+    public Data readAll() {
         HashMap<String, String> dictionary;
         FileInputStream fileInput;
         try {
@@ -22,13 +24,14 @@ public class SerializeParser implements Parser {
             dictionary = (HashMap<String, String>) objectInput.readObject();
             objectInput.close();
         } catch (IOException e) {
-            return new Pair(false, null);
+            return new Data(DatabaseCode.DATABASE_UNAVAILABLE);
         } catch (ClassNotFoundException e) {
-            return new Pair(false, null);
+            return new Data(DatabaseCode.DATABASE_ERROR);
         }
-        return new Pair(true, dictionary);
+        return new Data(DatabaseCode.DATABASE_READ, dictionary);
     }
 
+    // Overwrite then close the file
     public Boolean writeAll(HashMap<String, String> dictionary) {
         try {
             FileOutputStream fileOutput = new FileOutputStream(this.fileLocation);

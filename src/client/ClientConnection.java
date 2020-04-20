@@ -17,22 +17,32 @@ public class ClientConnection {
         this.socket = socket;
     }
 
-    // send the request and receive the response
-    public Response send(Request request) {
+    // Send the request
+    public void send(Request request) throws IOException {
+        ObjectOutputStream objectOut = new ObjectOutputStream(this.socket.getOutputStream());
+        objectOut.writeObject(request);
+        objectOut.flush();
+    }
+
+    // Wait to receive the response
+    public Response receive() throws IOException {
         Response response = new Response(ResponseCode.CONNECTION_LOST);
         try {
-            ObjectOutputStream objectOut = new ObjectOutputStream(this.socket.getOutputStream());
-            objectOut.writeObject(request);
-            objectOut.flush();
             ObjectInputStream objectInput = new ObjectInputStream(this.socket.getInputStream());
             response = (Response) objectInput.readObject();
-        } catch (IOException e) {
-            System.out.println("Connection Lost");
-            e.printStackTrace();
         } catch (ClassNotFoundException e) {
-            System.out.println("protocol.Request is not correctly formated");
+            System.out.println("database.Request is not correctly formated");
             e.printStackTrace();
         }
         return response;
+    }
+
+    public void close() {
+        try {
+            this.socket.close();
+        } catch (IOException e) {
+            System.out.println("Could not close socket");
+            e.printStackTrace();
+        }
     }
 }
