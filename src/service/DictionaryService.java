@@ -13,22 +13,18 @@ public class DictionaryService implements Service {
 
     public DictionaryService(Connector connector) {
         this.connector = connector;
-        this.load();
     }
 
-    public Boolean load() {
+    public DatabaseCode load() {
         Data data = this.connector.readAll();
         if (data.status == DatabaseCode.DATABASE_READ) {
             this.dictionary = data.dictionary;
-            return true;
-        } else {
-            System.out.println("Could not load file");
-            return false;
         }
+        return data.status;
     }
 
-    public Response query(String word) {
-        if (word == null) {
+    public synchronized Response query(String word) {
+        if (word == null || word == "") {
             return new Response(ResponseCode.MISSING_ARGUMENT);
         }
         if (this.dictionary.containsKey(word)) {
@@ -38,8 +34,9 @@ public class DictionaryService implements Service {
         return new Response(ResponseCode.NOT_FOUND);
     }
 
-    public Response add(String word, String meaning) {
-        if ((word == null) || (meaning == null)) {
+    public synchronized Response add(String word, String meaning) {
+        if ((word == null) || (meaning == null) ||
+                (word.equals("")) || (meaning.equals(""))) {
             return new Response(ResponseCode.MISSING_ARGUMENT);
         }
         if (this.dictionary.containsKey(word)) {
@@ -53,20 +50,24 @@ public class DictionaryService implements Service {
         return new Response(ResponseCode.ADDED, word, meaning);
     }
 
-    public Response remove(String word) {
-        if (word == null) {
+    public synchronized Response remove(String word) {
+        if (word == null || word.equals("")) {
             return new Response(ResponseCode.MISSING_ARGUMENT);
         }
-        this.dictionary.remove(word);
-        this.save();
-        return new Response(ResponseCode.DELETED);
+        if (this.dictionary.containsKey(word)) {
+            this.dictionary.remove(word);
+            this.save();
+            return new Response(ResponseCode.DELETED);
+        }
+        return new Response(ResponseCode.NOT_FOUND);
     }
 
-    public Response index() {
+    public synchronized Response index() {
         return new Response(ResponseCode.INDEX, this.dictionary);
     }
 
-    public Boolean save() {
+
+    public synchronized Boolean save() {
         if (this.connector.writeAll(this.dictionary)) {
             return true;
         } else {

@@ -31,7 +31,7 @@ public class ClientConnection {
             ObjectInputStream objectInput = new ObjectInputStream(this.socket.getInputStream());
             response = (Response) objectInput.readObject();
         } catch (ClassNotFoundException e) {
-            System.out.println("database.Request is not correctly formated");
+            System.out.println("database.Request is not correctly formatted");
             e.printStackTrace();
         }
         return response;

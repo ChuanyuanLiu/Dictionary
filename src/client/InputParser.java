@@ -28,6 +28,20 @@ public class InputParser {
         }
     }
 
+    public Request getRequest(String query, String word, String meaning) throws IllegalArgumentException {
+        RequestCode code = getRequestCode(query);
+        switch (code) {
+            case ADD:
+                return new Request(code, word, meaning);
+            case QUERY:
+                return new Request(code, word);
+            case DELETE:
+                return new Request(code, word);
+            default:
+                return new Request(code);
+        }
+    }
+
     // split input string and return a request
     // assumes input is in the format "RequestCode, Word, Meaning"
     // return null if not possible

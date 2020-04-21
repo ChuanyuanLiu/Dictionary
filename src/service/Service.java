@@ -1,10 +1,11 @@
 package service;
 
 import protocol.*;
+import service.database.DatabaseCode;
 
 public interface Service {
 
-    public Boolean load();
+    public DatabaseCode load();
 
     public Response query(String word);
 

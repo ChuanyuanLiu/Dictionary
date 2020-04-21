@@ -10,7 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class ServerConnection {
+public class ServerConnection  {
     private Service service;
     private Socket socket;
 
@@ -52,11 +52,9 @@ public class ServerConnection {
                 objectOut.flush();
             } catch (IOException e) {
                 System.out.println("Connection Lost");
-                e.printStackTrace();
                 break;
             } catch (ClassNotFoundException e) {
                 System.out.println("Wrong request");
-                e.printStackTrace();
                 break;
             }
         }
