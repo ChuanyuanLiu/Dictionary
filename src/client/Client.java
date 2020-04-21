@@ -17,37 +17,6 @@ public class Client {
     private Display display;
 
 
-    public Client() {
-        this.hostName = "LocalHost";
-        this.hostPort = 4444;
-    }
-
-
-    public void setDisplay(Display display) {
-        this.display = display;
-    }
-
-    public void Update(String query, String word, String meaning) {
-        // Create a new request
-        Request request = inputParser.getRequest(query, word, meaning);
-        // Execute
-        execute(request);
-    }
-
-    // Connect to host
-    public void connect() {
-        display.displayIn("Attempt to connect to host");
-        try {
-            // Establish initial connection
-            this.socket = new Socket(this.hostName, this.hostPort);
-            this.connection = new ClientConnection(this.socket);
-        } catch (IOException e) {
-            display.displayOut("Could not connect with host at " + hostName + ":" + hostPort);
-            return;
-        }
-        display.displayOut("Connected to host at " + hostName + ":" + hostPort);
-    }
-
     // Send a request and receive a response
     // Remember to connect to host first
     private void execute(Request request) {
@@ -96,6 +65,37 @@ public class Client {
     }
 
 
+    public Client(String address, int port) {
+        this.hostName = address;
+        this.hostPort = port;
+    }
+
+    public void setDisplay(Display display) {
+        this.display = display;
+    }
+
+    public void Update(String query, String word, String meaning) {
+        // Create a new request
+        Request request = inputParser.getRequest(query, word, meaning);
+        // Execute
+        execute(request);
+    }
+
+    // Connect to host
+    public void connect() {
+        display.displayIn("Attempt to connect to host");
+        try {
+            // Establish initial connection
+            this.socket = new Socket(this.hostName, this.hostPort);
+            this.connection = new ClientConnection(this.socket);
+        } catch (IOException e) {
+            display.displayOut("Could not connect with host at " + hostName + ":" + hostPort);
+            return;
+        }
+        display.displayOut("Connected to host at " + hostName + ":" + hostPort);
+    }
+
+
     // Close upon exit
     @Override
     protected void finalize() throws Throwable {
@@ -103,16 +103,4 @@ public class Client {
         super.finalize();
     }
 
-
-    public static void main(String[] args) {
-        // Display GUI by adding client as a listener
-        // and giving client the control of GUI
-        Client client = new Client();
-        GUI gui = new GUI(client);
-        Display display = new Display(gui);
-        client.setDisplay(display);
-
-        // Connect to server
-        client.connect();
-    }
 }
