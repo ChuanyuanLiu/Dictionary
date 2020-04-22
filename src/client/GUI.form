@@ -69,7 +69,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="2b20e" class="javax.swing.JTextArea" binding="dialgoueText" custom-create="true">
+          <component id="2b20e" class="javax.swing.JTextArea" binding="dialogueText" custom-create="true">
             <constraints/>
             <properties>
               <lineWrap value="true"/>

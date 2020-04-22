@@ -1,3 +1,4 @@
+//Chuanyuan Liu (884140)
 package server;
 
 import service.Connector;
@@ -45,7 +46,6 @@ public class Main {
     public static void main(String[] args) {
         // Parse commandline inputs
         CmdArgs cmdArgs = parseArgs(args);
-
         // Connect to dictionary file
         Connector connector = new SerializeConnector(cmdArgs.fileLocation);
         // Start the service

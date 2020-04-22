@@ -1,3 +1,4 @@
+//Chuanyuan Liu (884140)
 package client;
 
 import protocol.Request;
@@ -56,6 +57,9 @@ public class Display {
     }
 
     private String capitalize(String string) {
+        if (string.length() < 1) {
+            return string.toUpperCase();
+        }
         return string.substring(0, 1).toUpperCase() + string.substring(1);
     }
 

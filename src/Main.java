@@ -1,3 +1,5 @@
+//Chuanyuan Liu (884140)
+// An program to initialize serialized data
 import service.DictionaryService;
 import service.Connector;
 import service.SerializeConnector;

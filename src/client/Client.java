@@ -6,6 +6,7 @@ import protocol.Response;
 import java.io.IOException;
 import java.net.Socket;
 
+//Chuanyuan Liu (884140)
 // IMPORTANT always use the connect method before executing
 public class Client {
 

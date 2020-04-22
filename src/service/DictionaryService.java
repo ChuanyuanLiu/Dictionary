@@ -1,3 +1,4 @@
+//Chuanyuan Liu (884140)
 package service;
 
 import protocol.Response;
@@ -10,6 +11,10 @@ import java.util.HashMap;
 public class DictionaryService implements Service {
     private HashMap<String, String> dictionary;
     private Connector connector;
+
+    private String clean(String string) {
+        return string.trim().toLowerCase();
+    }
 
     public DictionaryService(Connector connector) {
         this.connector = connector;
@@ -24,38 +29,48 @@ public class DictionaryService implements Service {
     }
 
     public synchronized Response query(String word) {
-        if (word == null || word == "") {
+        if (word == null) {
             return new Response(ResponseCode.MISSING_ARGUMENT);
         }
-        if (this.dictionary.containsKey(word)) {
-            String meaning = this.dictionary.get(word);
-            return new Response(ResponseCode.FOUND, word, meaning);
+        String cleanWord = clean(word);
+        if (cleanWord.equals("")) {
+            return new Response(ResponseCode.MISSING_ARGUMENT);
+        }
+        if (this.dictionary.containsKey(cleanWord)) {
+            String meaning = this.dictionary.get(cleanWord);
+            return new Response(ResponseCode.FOUND, cleanWord, meaning);
         }
         return new Response(ResponseCode.NOT_FOUND);
     }
 
     public synchronized Response add(String word, String meaning) {
-        if ((word == null) || (meaning == null) ||
-                (word.equals("")) || (meaning.equals(""))) {
+        if ((word == null) || (meaning == null) ) {
             return new Response(ResponseCode.MISSING_ARGUMENT);
         }
-        if (this.dictionary.containsKey(word)) {
-            String existing_meaning = this.dictionary.get(word);
-            return new Response(ResponseCode.ALREADY_EXIST, word, existing_meaning);
+        String cleanWord = clean(word);
+        String cleanMeaning = clean(meaning);
+        if ((cleanWord.equals("")) || (cleanMeaning.equals(""))) {
+            return new Response(ResponseCode.MISSING_ARGUMENT);
         }
-        word = word.toLowerCase();
-        meaning = meaning.toLowerCase();
-        this.dictionary.put(word, meaning);
+        if (this.dictionary.containsKey(cleanWord)) {
+            String existing_meaning = this.dictionary.get(cleanWord);
+            return new Response(ResponseCode.ALREADY_EXIST, cleanWord, existing_meaning);
+        }
+        this.dictionary.put(cleanWord, cleanMeaning);
         this.save();
-        return new Response(ResponseCode.ADDED, word, meaning);
+        return new Response(ResponseCode.ADDED, cleanWord, cleanMeaning);
     }
 
     public synchronized Response remove(String word) {
-        if (word == null || word.equals("")) {
+        if (word == null) {
             return new Response(ResponseCode.MISSING_ARGUMENT);
         }
-        if (this.dictionary.containsKey(word)) {
-            this.dictionary.remove(word);
+        String cleanWord = clean(word);
+        if (cleanWord.equals("")) {
+            return new Response(ResponseCode.MISSING_ARGUMENT);
+        }
+        if (this.dictionary.containsKey(cleanWord)) {
+            this.dictionary.remove(cleanWord);
             this.save();
             return new Response(ResponseCode.DELETED);
         }

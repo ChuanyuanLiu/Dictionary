@@ -1,3 +1,4 @@
+//Chuanyuan Liu (884140)
 package service;
 
 import protocol.*;
@@ -14,4 +15,6 @@ public interface Service {
     public Response remove(String word);
 
     public Response index();
+
+    public Boolean save();
 }
