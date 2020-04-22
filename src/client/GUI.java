@@ -29,6 +29,14 @@ public class GUI {
         dialogueText.setEditable(false);
     }
 
+    public void appendDialogue(String string) {
+        dialogueText.append(string);
+        // scroll to bottom
+        dialoguePane.validate();
+        JScrollBar scroll = dialoguePane.getVerticalScrollBar();
+        scroll.setValue(scroll.getMaximum());
+    }
+
     public GUI(Client client) {
 
         // Display GUI
@@ -51,10 +59,6 @@ public class GUI {
                 client.Update(query, word, meaning);
             }
         });
-    }
-
-    public void appendDialogue(String string) {
-        dialogueText.append(string);
     }
 
 }
